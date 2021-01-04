@@ -47,10 +47,11 @@ Can also debug the MQTT messages for example with chrome app MQTTLens
 ```yaml
 vacuum:
   - platform: mqtt
-    name: "YOURNEATO"
+    unique_id: neato
+    schema: state
+    name: "ESP8266_Neato"
     supported_features:
-      - turn_on
-      - turn_off
+      - start
       - pause
       - stop
       - battery
@@ -59,16 +60,36 @@ vacuum:
       - clean_spot
       - send_command
     command_topic: "neato/command"
-    battery_level_topic: "neato/state"
-    battery_level_template: "{{ value_json.battery_level }}"
-    charging_topic: "neato/state"
-    charging_template: "{{ value_json.charging }}"
-    cleaning_topic: "neato/state"
-    cleaning_template: "{{ value_json.cleaning }}"
-    docked_topic: "neato/state"
-    docked_template: "{{ value_json.docked }}"
-    send_command_topic: 'neato/send_command'
+    state_topic: "neato/state"
+    send_command_topic: "neato/send_command"
     availability_topic: "neato/available"
-    payload_available: "online"
-    payload_not_available: "offline"
 ```
+
+
+You can then also do things like creating an entity for the battery level:
+
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      hoover_battery:
+        friendly_name: "Hoover battery level"
+        unit_of_measurement: "%"
+        icon_template: "mdi:battery-charging"
+        value_template: "{{ state_attr('vacuum.esp8266_neato', 'battery_level') }}"
+```
+
+Or set the time with a script:
+
+```yaml
+set_hoover_time:
+  alias: Set hoover time
+  sequence:
+  - service: vacuum.send_command
+    data:
+      entity_id: vacuum.esp8266_neato
+      command: SetTime {{ now().weekday() + 1 % 7 }} {{ now().hour }} {{ now().minute
+        }} {{ now().second }}.
+    entity_id: vacuum.esp8266_neato
+  mode: single
+  ```
