@@ -21,7 +21,10 @@ state error, returning, paused
   Cleaning - fan spinning?
   (Paused does not exist, only idle.)
   
-  See the excellent code at https://github.com/HawtDogFlvrWtr/botvac-wifi for inspiration.
+  See the excellent code at 
+    https://github.com/HawtDogFlvrWtr/botvac-wifi
+    https://github.com/i8beef/I8Beef.Neato.Mqtt/blob/master/src/I8Beef.Neato.Mqtt.ino 
+   for inspiration.
 */
 // TODO Guillaume END //
 
@@ -122,7 +125,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
   {
     if (newPayload == "start_pause" || newPayload == "turn_on")
     {
-      Serial.printf("%s\n", "Clean");
+      Serial.printf("%s\n", "Clean House");
     }
     if (newPayload == "stop" || newPayload == "turn_off")
     {
